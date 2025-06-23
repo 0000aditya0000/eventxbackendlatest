@@ -36,6 +36,7 @@ export class UserService {
       password: Joi.string().required(),
       role: Joi.string().required(),
       age: Joi.string().required(),
+      image: Joi.string().optional(),
     });
 
     const { error, value } = schema.validate(userData);
@@ -43,7 +44,7 @@ export class UserService {
       throw new HttpException(error.details[0].message, HttpStatus.BAD_REQUEST);
     }
 
-    const { name, email, phone, password, role, age } = value;
+    const { name, email, phone, password, role, age, image } = value;
     const existingUser = await this.userRepository.findOne({
       where: { email: email.toLowerCase() },
     });
@@ -62,6 +63,7 @@ export class UserService {
       password: hashedPassword,
       role: role.toLowerCase(),
       age,
+      image,
     });
     const savedUser = await this.userRepository.save(newUser);
 

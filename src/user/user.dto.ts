@@ -25,6 +25,16 @@ export class SignupDto {
   @IsString()
   @IsNotEmpty()
   readonly role: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  readonly age: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  readonly image?: string;
 }
 
 
