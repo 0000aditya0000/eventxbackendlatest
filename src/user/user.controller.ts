@@ -20,6 +20,7 @@ import {
   resetPasswordSwagger,
   forgetPasswordSwagger,
 } from './swagger.user';
+import { SignupDto } from './user.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -28,7 +29,7 @@ export class UserController {
 
   @Post('signup')
   @createUserSwagger()
-  async signup(@Body() userData: any) {
+  async signup(@Body() userData: SignupDto) {
     return this.userService.signup(userData);
   }
 
