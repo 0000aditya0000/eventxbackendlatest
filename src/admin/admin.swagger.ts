@@ -10,7 +10,7 @@ import {
   ApiResponse,
   ApiParam,
 } from '@nestjs/swagger';
-import { UpdateEventDto } from 'src/event/events.dto';
+import { UpdateEventDto } from '../event/events.dto';
 
 export const getEventsByTypeSwagger = () => {
   return applyDecorators(

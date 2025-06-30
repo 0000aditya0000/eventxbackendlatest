@@ -32,7 +32,7 @@ describe('UserController', () => {
     it('should throw error for invalid signup data', async () => {
       const userData = {
         // invalid data missing required fields
-      };
+      } as any;
 
       await expect(userController.signup(userData)).rejects.toThrowError(
         new HttpException('Invalid data', HttpStatus.BAD_REQUEST)

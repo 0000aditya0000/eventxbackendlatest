@@ -18,11 +18,11 @@ import {
   getEventTypeDistributionSwagger,
 } from './admin.swagger';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/user/guards/auth.guard';
-import { RolesGuard } from 'src/user/guards/roles.guard';
-import { Roles } from 'src/user/decorators/roles.decorator';
-import { ApprovalStatus } from 'src/event/event.entity';
-import { EventService } from 'src/event/event.service';
+import { AuthGuard } from '../user/guards/auth.guard';
+import { RolesGuard } from '../user/guards/roles.guard';
+import { Roles } from '../user/decorators/roles.decorator';
+import { ApprovalStatus } from '../event/event.entity';
+import { EventService } from '../event/event.service';
 
 @Controller('admin')
 @ApiTags('admin')
