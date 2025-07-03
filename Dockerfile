@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Expose the port on which your Nest.js app runs
-EXPOSE 4000
+EXPOSE 3000
 
 # Command to start your Nest.js application
 CMD ["npm", "run", "start:prod"]
