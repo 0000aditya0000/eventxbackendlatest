@@ -25,7 +25,7 @@ import {
 import { AuthGuard } from '../user/guards/auth.guard';
 import { EventService } from './event.service';
 import { UpdateEventDto } from './events.dto';
-import { User } from 'src/user/decorators/user.decorator';
+import { User } from '../user/decorators/user.decorator';
 
 @ApiBearerAuth()
 @Controller('events')
