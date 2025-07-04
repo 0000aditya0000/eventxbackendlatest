@@ -175,8 +175,11 @@ export const getEventsByStatusSwagger = () => {
     ApiBearerAuth(),
     ApiQuery({
       name: 'status',
-      enum: ['past', 'current', 'trending', 'upcoming'],
+      enum: ['all', 'past', 'current', 'trending', 'upcoming'],
       description: 'Type of events to fetch',
+      required: false,
+      example: 'all',
+      schema: { default: 'all' },
     }),
     ApiOkResponse({ description: 'Successfully fetched events' }),
     ApiBadRequestResponse({ description: 'Invalid input data' })

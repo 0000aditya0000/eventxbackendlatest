@@ -53,7 +53,7 @@ export class EventController {
 
   @Get('status')
   @getEventsByStatusSwagger()
-  async getEventByStatus(@Query('status') type: string) {
+  async getEventByStatus(@Query('status') type: string = 'all') {
     return this.eventService.getEventsByStatus(type);
   }
 
