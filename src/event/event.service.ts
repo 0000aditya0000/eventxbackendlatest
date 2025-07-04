@@ -466,6 +466,7 @@ export class EventService {
     } else {
       return {
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        data: [],
         message: 'No data found',
         count: count,
       };
