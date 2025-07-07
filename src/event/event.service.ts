@@ -13,6 +13,7 @@ import {
   LessThan,
   MoreThan,
   MoreThanOrEqual,
+  LessThanOrEqual,
 } from 'typeorm';
 import { ApprovalStatus, Event } from './event.entity';
 import { User } from '../user/user.entity';
@@ -405,6 +406,17 @@ export class EventService {
           ],
         });
         break;
+      case 'current':
+        events = await this.eventRepository.find({
+          where: [
+            {
+              ...whereClause,
+              event_start_date: LessThanOrEqual(currentDate),
+              event_end_date: MoreThanOrEqual(currentDate),
+            },
+          ],
+        });
+        break;
       case 'upcoming':
         events = await this.eventRepository.find({
           where: [
@@ -454,6 +466,7 @@ export class EventService {
     } else {
       return {
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        data: [],
         message: 'No data found',
         count: count,
       };
