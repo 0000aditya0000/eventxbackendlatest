@@ -27,9 +27,10 @@ import { UserModule } from './user/user.module';
       database: process.env.DB_NAME,
       entities: [Event, User, UserEvent],
       synchronize: true,
-      ssl: {
-        rejectUnauthorized: false, // Required for connecting to Render PostgreSQL
-      }, // Automatic schema synchronization (not recommended in production)
+      ssl:
+        process.env.NODE_ENV === 'production'
+          ? false
+          : { rejectUnauthorized: false },
     }),
     TypeOrmModule.forFeature([Event, User, UserEvent]),
     AdminModule,
