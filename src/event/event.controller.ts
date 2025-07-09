@@ -53,8 +53,12 @@ export class EventController {
 
   @Get('status')
   @getEventsByStatusSwagger()
-  async getEventByStatus(@Query('status') type: string = 'all') {
-    return this.eventService.getEventsByStatus(type);
+  async getEventByStatus(
+    @Query('status') type: string = 'all',
+    @User('role') role: string
+  ) {
+    const isAdmin = role === 'admin';
+    return this.eventService.getEventsByStatus(type, isAdmin);
   }
 
   @Get('userEventList/:userId')
