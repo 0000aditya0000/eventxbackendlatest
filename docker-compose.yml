@@ -18,7 +18,13 @@ services:
       - postgres
     networks:
       - app-network
-
+  test:
+    build: .
+    command: npm run test:e2e
+    depends_on:
+      - postgres
+    networks:
+      - app-network
   postgres:
     image: postgres:latest
     ports:

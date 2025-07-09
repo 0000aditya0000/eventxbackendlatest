@@ -11,30 +11,24 @@ pipeline {
         checkout scm
       }
     }
-    stage('Install') {
+    stage('Setup Env') {
       steps {
-        sh 'npm install'
-      }
-    }
-    stage('Lint') {
-      steps {
-        sh 'npm run lint:format'
-      }
-    }
-    stage('Test') {
-      steps {
-        sh 'npm run test:e2e'
-      }
-    }
-    stage('Build') {
-      steps {
-        sh 'npm run build'
+        sh '''
+          set -a
+          source .env
+          set +a
+        '''
       }
     }
     stage('Deploy') {
       steps {
         sh 'docker-compose down || true'
         sh 'docker-compose up -d --build'
+      }
+    }
+    stage('Test') {
+      steps {
+        sh 'docker-compose run --rm app npm run test:e2e'
       }
     }
   }
