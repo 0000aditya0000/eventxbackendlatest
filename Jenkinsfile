@@ -32,8 +32,6 @@ pipeline {
       // Archive built files if any
       archiveArtifacts artifacts: 'dist/**/*.*', allowEmptyArchive: true
 
-      // Publish test results (assumes Jest or similar is configured to output to XML)
-      junit 'coverage/**/*.xml'
     }
   }
 }
