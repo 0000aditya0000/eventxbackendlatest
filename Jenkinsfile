@@ -12,18 +12,6 @@ pipeline {
       }
     }
 
-    stage('Setup Env') {
-      steps {
-        // Use bash explicitly to avoid 'source: not found' error
-        sh '''
-          #!/bin/bash
-          set -a
-          source .env
-          set +a
-        '''
-      }
-    }
-
     stage('Deploy') {
       steps {
         sh 'docker-compose down || true'
