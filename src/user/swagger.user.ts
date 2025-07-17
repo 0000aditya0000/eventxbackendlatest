@@ -8,7 +8,7 @@ import {
   ApiBadRequestResponse,
   ApiResponse,
 } from '@nestjs/swagger';
-import { SignupDto, LoginDto, UpdateUserDto } from './user.dto';
+import { SignupDto, UpdateUserDto } from './user.dto';
 
 export const createUserSwagger = () => {
   return applyDecorators(
@@ -17,18 +17,6 @@ export const createUserSwagger = () => {
     ApiBody({
       type: SignupDto,
       description: 'User data to create a new user',
-    }),
-    ApiBadRequestResponse({ description: 'Invalid input data' })
-  );
-};
-
-export const loginUserSwagger = () => {
-  return applyDecorators(
-    ApiTags('user'),
-    ApiOperation({ summary: 'User login' }),
-    ApiBody({
-      type: LoginDto,
-      description: 'User credentials for login',
     }),
     ApiBadRequestResponse({ description: 'Invalid input data' })
   );
