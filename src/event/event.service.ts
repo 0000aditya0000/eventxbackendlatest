@@ -378,98 +378,60 @@ export class EventService {
   }
 
   async getEventsByStatus(
-    type: string,
-    isAdmin: boolean = false
+    type: string = 'all',
+    isAdmin: boolean = false,
+    genre?: string
   ): Promise<{
     statusCode: number;
     message: string;
     data?: Event[];
     count?: number;
   }> {
-    const currentDate = new Date();
-    const whereClause: Partial<Pick<Event, 'approval'>> = {};
-    let events: Event[] = [];
-
-    if (!isAdmin) {
-      whereClause.approval = ApprovalStatus.APPROVED;
-    }
-
-    switch (type) {
-      case 'past':
-        events = await this.eventRepository.find({
-          where: [
-            {
-              ...whereClause,
-              event_start_date: LessThan(currentDate),
-              event_end_date: LessThan(currentDate),
-            },
-          ],
-        });
-        break;
-      case 'current':
-        events = await this.eventRepository.find({
-          where: [
-            {
-              ...whereClause,
-              event_start_date: LessThanOrEqual(currentDate),
-              event_end_date: MoreThanOrEqual(currentDate),
-            },
-          ],
-        });
-        break;
-      case 'upcoming':
-        events = await this.eventRepository.find({
-          where: [
-            {
-              ...whereClause,
-              event_start_date: MoreThan(currentDate),
-              event_end_date: MoreThan(currentDate),
-            },
-          ],
-        });
-        break;
-      case 'trending':
-        events = await this.eventRepository.find({
-          where: [
-            {
-              ...whereClause,
-              trending: true,
-              event_start_date: MoreThanOrEqual(currentDate),
-              event_end_date: MoreThanOrEqual(currentDate),
-            },
-          ],
-        });
-        break;
-      case 'all':
-        events = await this.eventRepository.find({
-          where: {
-            ...whereClause,
-          },
-        });
-        break;
-      default:
-        return {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: 'Invalid event type',
-        };
-    }
-
-    const count = events.length;
-
-    if (count > 0) {
+    try {
+      const currentDate = new Date();
+      const whereClause: any = {};
+      if (!isAdmin) {
+        whereClause.approval = ApprovalStatus.APPROVED;
+      }
+      if (genre) {
+        whereClause.event_type = genre;
+      }
+      switch (type) {
+        case 'past':
+          whereClause.event_start_date = LessThan(currentDate);
+          whereClause.event_end_date = LessThan(currentDate);
+          break;
+        case 'current':
+          whereClause.event_start_date = LessThanOrEqual(currentDate);
+          whereClause.event_end_date = MoreThanOrEqual(currentDate);
+          break;
+        case 'upcoming':
+          whereClause.event_start_date = MoreThan(currentDate);
+          whereClause.event_end_date = MoreThan(currentDate);
+          break;
+        case 'trending':
+          whereClause.trending = true;
+          whereClause.event_start_date = MoreThanOrEqual(currentDate);
+          whereClause.event_end_date = MoreThanOrEqual(currentDate);
+          break;
+        case 'all':
+          break;
+        default:
+          throw new BadRequestException('Invalid event type');
+      }
+      const events = await this.eventRepository.find({ where: whereClause });
+      const count = events.length;
       return {
-        statusCode: HttpStatus.OK,
-        message: 'Events found successfully',
+        statusCode: count > 0 ? 200 : 422,
+        message: count > 0 ? 'Events found successfully' : 'No data found',
         data: events,
-        count: count,
+        count,
       };
-    } else {
-      return {
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-        data: [],
-        message: 'No data found',
-        count: count,
-      };
+    } catch (error) {
+      throw new HttpException(
+        `An error occurred while fetching ${type} events.`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
   }
 
