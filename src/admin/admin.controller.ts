@@ -18,8 +18,8 @@ import {
   getEventTypeDistributionSwagger,
 } from './admin.swagger';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '../user/guards/auth.guard';
-import { RolesGuard } from '../user/guards/roles.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../user/decorators/roles.decorator';
 import { ApprovalStatus } from '../event/event.entity';
 import { EventService } from '../event/event.service';

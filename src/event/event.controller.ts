@@ -22,7 +22,7 @@ import {
   findEventsSwagger,
   getEventsByCreatorSwagger,
 } from './event.swagger';
-import { AuthGuard } from '../user/guards/auth.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
 import { EventService } from './event.service';
 import { UpdateEventDto } from './events.dto';
 import { User } from '../user/decorators/user.decorator';

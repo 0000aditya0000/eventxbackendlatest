@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcryptjs';
-import { JwtService } from '@nestjs/jwt';
+// import { JwtService } from '@nestjs/jwt';
 import { User } from './user.entity';
 import { Event } from '../event/event.entity';
 import { MailSender } from '../mailSender';
@@ -22,7 +22,7 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Event)
     private readonly eventRepository: Repository<Event>,
-    private jwtService: JwtService,
+    // private jwtService: JwtService,
     private mailSender: MailSender
   ) {}
 
@@ -77,47 +77,6 @@ export class UserService {
       statusCode: 200,
       message: 'User signup successful',
       data: savedUser,
-    };
-  }
-
-  async login(credentials: { email: string; password: string }): Promise<{
-    message: string;
-    access_token?: string;
-    data?: any;
-    statusCode: number;
-  }> {
-    const schema = Joi.object({
-      email: Joi.string().email().required(),
-      password: Joi.string().required(),
-    });
-
-    const { error, value } = schema.validate(credentials);
-    if (error) {
-      throw new HttpException(error.details[0].message, HttpStatus.BAD_REQUEST);
-    }
-
-    const { email, password } = value;
-    const user = await this.userRepository.findOne({
-      where: { email: email.toLowerCase() },
-    });
-    if (!user) {
-      throw new NotFoundException('User does not exist.');
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw new HttpException('Invalid Password', HttpStatus.UNAUTHORIZED);
-    }
-
-    delete user.password;
-    const payload = { sub: user.id, username: user.email, role: user.role };
-    const access_token = await this.jwtService.signAsync(payload);
-
-    return {
-      statusCode: 200,
-      message: 'Login successful',
-      access_token,
-      data: user,
     };
   }
 

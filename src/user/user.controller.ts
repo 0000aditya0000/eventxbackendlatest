@@ -9,11 +9,11 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from './guards/auth.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
 import { UserService } from './user.service';
 import {
   createUserSwagger,
-  loginUserSwagger,
+  // loginUserSwagger,
   updateUserSwagger,
   getUserByIdSwagger,
   getAllUsersSwagger,
@@ -33,11 +33,11 @@ export class UserController {
     return this.userService.signup(userData);
   }
 
-  @Post('login')
-  @loginUserSwagger()
-  async login(@Body() credentials: { email: string; password: string }) {
-    return this.userService.login(credentials);
-  }
+  // @Post('login')
+  // @loginUserSwagger()
+  // async login(@Body() credentials: { email: string; password: string }) {
+  //   return this.userService.login(credentials);
+  // }
 
   @Get(':id')
   @getUserByIdSwagger()

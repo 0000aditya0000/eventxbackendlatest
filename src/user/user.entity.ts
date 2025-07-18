@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { UserEvent } from '../user-event/user-event.entity';
+import { Session } from 'src/auth/session.entity';
 
 @Entity()
 export class User {
@@ -44,4 +45,7 @@ export class User {
 
   @OneToMany(() => UserEvent, (userEvent) => userEvent.user)
   userEvents: UserEvent[];
+
+  @OneToMany(() => Session, (session) => session.user)
+  sessions: Session[];
 }

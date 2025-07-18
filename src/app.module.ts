@@ -9,11 +9,13 @@ import { User } from './user/user.entity';
 import { AdminModule } from './admin/admin.module';
 import { UserEventModule } from './user-event/user-event.module';
 import { UserEvent } from './user-event/user-event.entity';
-import { JwtModule } from '@nestjs/jwt';
 import { MailSender } from './mailSender';
 import { ConfigModule } from '@nestjs/config';
 import { EventModule } from './event/event.module';
 import { UserModule } from './user/user.module';
+import { AuthService } from './auth/auth.service';
+import { Session } from './auth/session.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -25,25 +27,21 @@ import { UserModule } from './user/user.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Event, User, UserEvent],
+      entities: [Event, User, UserEvent, Session],
       synchronize: true,
       ssl:
         process.env.NODE_ENV === 'production'
           ? false
           : { rejectUnauthorized: false },
     }),
-    TypeOrmModule.forFeature([Event, User, UserEvent]),
+    TypeOrmModule.forFeature([Event, User, UserEvent, Session]),
     AdminModule,
     UserModule,
     EventModule,
     UserEventModule,
-    JwtModule.register({
-      global: true,
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.JWT_EXPIRES_IN },
-    }),
+    AuthModule,
   ],
   controllers: [AppController, EventController, UserController],
-  providers: [AppService, MailSender],
+  providers: [AppService, AuthService, MailSender],
 })
 export class AppModule {}
