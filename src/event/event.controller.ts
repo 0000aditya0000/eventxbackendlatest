@@ -54,11 +54,12 @@ export class EventController {
   @Get('status')
   @getEventsByStatusSwagger()
   async getEventByStatus(
+    @User('role') role: string,
     @Query('status') type: string = 'all',
-    @User('role') role: string
+    @Query('genre') genre?: string
   ) {
     const isAdmin = role === 'admin';
-    return this.eventService.getEventsByStatus(type, isAdmin);
+    return this.eventService.getEventsByStatus(type, isAdmin, genre);
   }
 
   @Get('userEventList/:userId')
@@ -76,10 +77,12 @@ export class EventController {
   @Get('find')
   @findEventsSwagger()
   async findEvents(
+    @User('role') role: string,
     @Query('keyword') keyword?: string,
     @Query('type') type?: 'trending' | 'upcoming'
   ) {
-    return this.eventService.findEvents(keyword, type);
+    const isAdmin = role === 'admin';
+    return this.eventService.findEvents(keyword, type, isAdmin);
   }
 
   @Get(':id?')

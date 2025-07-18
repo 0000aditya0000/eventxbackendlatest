@@ -171,7 +171,7 @@ export const getEventTypeSwagger = () => {
 export const getEventsByStatusSwagger = () => {
   return applyDecorators(
     ApiTags('events'),
-    ApiOperation({ summary: 'Get events by status' }),
+    ApiOperation({ summary: 'Get events by status and optional genre' }),
     ApiBearerAuth(),
     ApiQuery({
       name: 'status',
@@ -180,6 +180,20 @@ export const getEventsByStatusSwagger = () => {
       required: false,
       example: 'all',
       schema: { default: 'all' },
+    }),
+    ApiQuery({
+      name: 'genre',
+      required: false,
+      enum: [
+        'Music',
+        'Comedy',
+        'Educational',
+        'Health&Wellness',
+        'Workshop',
+        'Promotion',
+      ],
+      description: 'Genre of the event (e.g., Music, Comedy, etc.)',
+      example: 'Music',
     }),
     ApiOkResponse({ description: 'Successfully fetched events' }),
     ApiBadRequestResponse({ description: 'Invalid input data' })

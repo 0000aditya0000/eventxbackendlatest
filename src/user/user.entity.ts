@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { UserEvent } from '../user-event/user-event.entity';
-import { Session } from 'src/auth/session.entity';
+import { Session } from '../auth/session.entity';
 
 @Entity()
 export class User {
