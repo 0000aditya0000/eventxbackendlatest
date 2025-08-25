@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEvent } from './user-event.entity';
@@ -56,48 +56,60 @@ export class UserEventService {
 
   async getUserEvents(
     user_id: number,
-    status: 'ongoing' | 'past' | 'upcoming' | 'all' = 'all'
-  ): Promise<{ message: string; data?: any; statusCode: number }> {
-    const user = await this.userRepository.findOne({ where: { id: user_id } });
-    delete user.password;
+    status: 'ongoing' | 'past' | 'upcoming' | 'all' = 'all',
+    genre?: string
+  ): Promise<{
+    statusCode: number;
+    message: string;
+    data: any[];
+    count: number;
+  }> {
+    const user = await this.userRepository.findOne({
+      where: { id: user_id },
+      select: ['id'],
+    });
+
     if (!user) {
       throw new NotFoundException(`User with ID ${user_id} does not exist`);
     }
 
-    const [userEvents] = await this.userEventRepository.findAndCount({
-      where: { user: { id: user_id } },
-      relations: ['event'],
-    });
-
     const now = new Date();
 
-    const filteredEvents = userEvents
-      .map((ue) => ue.event)
-      .filter((event) => {
-        const start = new Date(event.event_start_date);
-        const end = new Date(event.event_end_date);
+    const query = this.userEventRepository
+      .createQueryBuilder('user_event')
+      .leftJoinAndSelect('user_event.event', 'event')
+      .where('user_event.user_id = :userId', { userId: user_id });
 
-        switch (status) {
-          case 'ongoing':
-            return start <= now && end >= now;
-          case 'upcoming':
-            return start > now;
-          case 'past':
-            return end < now;
-          default:
-            return true;
-        }
-      });
+    if (status === 'ongoing') {
+      query.andWhere(
+        'event.event_start_date <= :now AND event.event_end_date >= :now',
+        { now }
+      );
+    } else if (status === 'upcoming') {
+      query.andWhere('event.event_start_date > :now', { now });
+    } else if (status === 'past') {
+      query.andWhere('event.event_end_date < :now', { now });
+    }
 
+    if (genre) {
+      query.andWhere('LOWER(event.event_type) = LOWER(:genre)', { genre });
+    }
+
+    const userEvents = await query.getMany();
+
+    const bookedEvents = userEvents.map((ue) => ({
+      event_start_date: ue.event.event_start_date,
+      event_end_date: ue.event.event_end_date,
+      event_name: ue.event.event_name,
+      event_type: ue.event.event_type,
+      status: ue.event.status,
+      location: ue.event.location,
+    }));
     return {
-      statusCode: 200,
-      message: 'Events retrieved successfully',
-      data: {
-        users: user,
-        event: filteredEvents,
-        totalEventsCount: filteredEvents.length,
-        status: status,
-      },
+      statusCode: HttpStatus.OK,
+      message: 'Events found successfully',
+      data: bookedEvents,
+      count: bookedEvents.length,
     };
   }
 

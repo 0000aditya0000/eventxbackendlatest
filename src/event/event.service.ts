@@ -401,7 +401,7 @@ export class EventService {
           whereClause.event_start_date = LessThan(currentDate);
           whereClause.event_end_date = LessThan(currentDate);
           break;
-        case 'current':
+        case 'ongoing':
           whereClause.event_start_date = LessThanOrEqual(currentDate);
           whereClause.event_end_date = MoreThanOrEqual(currentDate);
           break;
