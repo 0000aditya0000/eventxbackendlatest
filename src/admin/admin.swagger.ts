@@ -192,3 +192,53 @@ export const getEventTypeDistributionSwagger = () => {
     })
   );
 };
+
+export const getUnapprovedEventsSwagger = () => {
+  return applyDecorators(
+    ApiTags('admin'),
+    ApiOperation({ summary: 'Get all unapproved events' }),
+    ApiBearerAuth(),
+    ApiResponse({
+      status: 200,
+      description: 'Unapproved events retrieved successfully',
+      schema: {
+        type: 'object',
+        properties: {
+          statusCode: { type: 'number', example: 200 },
+          message: {
+            type: 'string',
+            example: 'Unapproved events retrieved successfully',
+          },
+          data: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                id: { type: 'number', example: 1 },
+                title: { type: 'string', example: 'Sample Event' },
+                description: { type: 'string', example: 'Event Description' },
+                event_type: { type: 'string', example: 'Conference' },
+                start_date: { type: 'string', example: '2024-12-01T10:00:00Z' },
+                end_date: { type: 'string', example: '2024-12-01T12:00:00Z' },
+                location: { type: 'string', example: 'New York' },
+                is_active: { type: 'boolean', example: true },
+                approval: { type: 'string', example: 'PENDING' },
+                created_at: { type: 'string', example: '2024-11-01T09:00:00Z' },
+                updated_at: { type: 'string', example: '2024-11-05T11:00:00Z' },
+              },
+            },
+          },
+        },
+      },
+    }),
+    ApiResponse({ status: 401, description: 'Unauthorized' }),
+    ApiResponse({
+      status: 403,
+      description: 'Forbidden. Only admin can access this.',
+    }),
+    ApiResponse({
+      status: 500,
+      description: 'Error fetching unapproved events',
+    })
+  );
+};

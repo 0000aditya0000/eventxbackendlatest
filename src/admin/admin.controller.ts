@@ -16,6 +16,7 @@ import {
   updateStatusEventSwagger,
   getUserStatsSwagger,
   getEventTypeDistributionSwagger,
+  getUnapprovedEventsSwagger,
 } from './admin.swagger';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guards/auth.guard';
@@ -38,6 +39,14 @@ export class AdminController {
   @getEventsByTypeSwagger()
   async getEventsByType(@Query('type') type: string) {
     return this.adminService.getEventsByType(type);
+  }
+
+  @Get('events/unapproved')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
+  @getUnapprovedEventsSwagger()
+  async getUnapprovedEvents() {
+    return this.adminService.getUapprovedEvents();
   }
 
   @Post('update-status')
