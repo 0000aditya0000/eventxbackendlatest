@@ -175,7 +175,7 @@ export const getEventsByStatusSwagger = () => {
     ApiBearerAuth(),
     ApiQuery({
       name: 'status',
-      enum: ['all', 'past', 'current', 'trending', 'upcoming'],
+      enum: ['all', 'past', 'ongoing', 'trending', 'upcoming'],
       description: 'Type of events to fetch',
       required: false,
       example: 'all',

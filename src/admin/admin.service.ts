@@ -4,7 +4,7 @@ import {
   Repository,
   LessThan,
   MoreThan,
-  // LessThanOrEqual,
+  LessThanOrEqual,
   MoreThanOrEqual,
   Between,
 } from 'typeorm';
@@ -58,6 +58,16 @@ export class AdminService {
             {
               event_start_date: LessThan(currentDate),
               event_end_date: LessThan(currentDate),
+            },
+          ],
+        });
+        break;
+      case 'ongoing':
+        events = await this.eventRepository.find({
+          where: [
+            {
+              event_start_date: LessThanOrEqual(currentDate),
+              event_end_date: MoreThanOrEqual(currentDate),
             },
           ],
         });

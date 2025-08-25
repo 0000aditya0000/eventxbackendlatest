@@ -39,12 +39,7 @@ export const getUserEventsSwagger = () => {
   return applyDecorators(
     ApiTags('user-event'),
     ApiBearerAuth(),
-    // ApiHeader({
-    //   name: 'jwt token',
-    //   description: 'JWT token for authentication',
-    //   required: false,
-    // }),
-    ApiOperation({ summary: 'Get events for a user by status' }),
+    ApiOperation({ summary: 'Get events for a user with filters' }),
     ApiParam({
       name: 'user_id',
       required: true,
@@ -59,7 +54,38 @@ export const getUserEventsSwagger = () => {
       enum: ['ongoing', 'past', 'upcoming', 'all'],
       example: 'ongoing',
     }),
-    ApiResponse({ status: 200, description: 'Events retrieved successfully' }),
+    ApiQuery({
+      name: 'genre',
+      required: false,
+      description: 'Filter events by genre/type',
+      enum: [
+        'Music',
+        'Comedy',
+        'Educational',
+        'Health&Wellness',
+        'Workshop',
+        'Promotion',
+      ],
+      example: 'Music',
+    }),
+    ApiResponse({
+      status: 200,
+      description: 'Events retrieved successfully',
+      schema: {
+        example: {
+          bookedEvents: [
+            {
+              event_start_date: '2025-12-25T00:00:00.000Z',
+              event_end_date: '2026-01-05T00:00:00.000Z',
+              event_name: 'Manali Vacation',
+              event_type: 'Promotion',
+              status: 'APPROVED',
+              location: 'Kashmir',
+            },
+          ],
+        },
+      },
+    }),
     ApiResponse({ status: 400, description: 'Validation error' }),
     ApiResponse({
       status: 404,

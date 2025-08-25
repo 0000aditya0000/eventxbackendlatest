@@ -24,7 +24,7 @@ export const getEventsByTypeSwagger = () => {
     ApiBearerAuth(),
     ApiQuery({
       name: 'type',
-      enum: ['past', 'current', 'trending', 'upcoming'],
+      enum: ['past', 'ongoing', 'trending', 'upcoming'],
       description: 'Type of events to fetch',
     }),
     ApiBadRequestResponse({ description: 'Invalid input data' })

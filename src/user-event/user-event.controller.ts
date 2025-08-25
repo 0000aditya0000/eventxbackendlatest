@@ -50,7 +50,8 @@ export class UserEventController {
   @Get('user/:user_id')
   async getUserEvents(
     @Param('user_id') userId: string,
-    @Query('status') status?: 'ongoing' | 'past' | 'upcoming' | 'all'
+    @Query('status') status?: 'ongoing' | 'past' | 'upcoming' | 'all',
+    @Query('genre') genre?: string
   ) {
     const schema = Joi.object({
       user_id: Joi.number().required(),
@@ -68,7 +69,11 @@ export class UserEventController {
       throw new BadRequestException(error.details[0].message);
     }
 
-    return await this.userEventService.getUserEvents(value.user_id, status);
+    return await this.userEventService.getUserEvents(
+      value.user_id,
+      status,
+      genre
+    );
   }
 
   @getEventUsersSwagger()
