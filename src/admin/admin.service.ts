@@ -8,7 +8,7 @@ import {
   MoreThanOrEqual,
   Between,
 } from 'typeorm';
-import { Event } from '../event/event.entity';
+import { ApprovalStatus, Event } from '../event/event.entity';
 import { User } from '../user/user.entity';
 import {
   // startOfDay,
@@ -240,6 +240,32 @@ export class AdminService {
     } catch (error) {
       throw new HttpException(
         'Error fetching event type distribution',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async getUapprovedEvents(): Promise<{
+    statusCode: number;
+    message: string;
+    data: Event[];
+  }> {
+    try {
+      const unapprovedEvents = await this.eventRepository.find({
+        where: {
+          approval: ApprovalStatus.PENDING,
+          event_start_date: MoreThan(new Date()),
+        },
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Unapproved events fetched successfully',
+        data: unapprovedEvents,
+      };
+    } catch (error) {
+      throw new HttpException(
+        'Error fetching unapproved events',
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
