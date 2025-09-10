@@ -98,6 +98,7 @@ export class UserEventService {
     const userEvents = await query.getMany();
 
     const bookedEvents = userEvents.map((ue) => ({
+      id: ue.event.id,
       event_start_date: ue.event.event_start_date,
       event_end_date: ue.event.event_end_date,
       event_name: ue.event.event_name,
