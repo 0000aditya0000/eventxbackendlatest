@@ -377,6 +377,84 @@ export class EventService {
     }
   }
 
+  async getNearbyEvents(
+    latitude: number,
+    longitude: number,
+    radiusKm: number = 10,
+    isAdmin: boolean = false
+  ): Promise<{
+    statusCode: number;
+    message: string;
+    data?: Array<Event & { distance_km: number }>;
+  }> {
+    if (
+      latitude === undefined ||
+      longitude === undefined ||
+      Number.isNaN(Number(latitude)) ||
+      Number.isNaN(Number(longitude))
+    ) {
+      throw new HttpException(
+        'latitude and longitude are required',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const lat = Number(latitude);
+    const lon = Number(longitude);
+    const radius = Number(radiusKm) || 10;
+
+    // Haversine formula (in km)
+    // distance = 2r * asin(sqrt(sin^2((lat2-lat1)/2) + cos(lat1)*cos(lat2)*sin^2((lon2-lon1)/2)))
+    // Using TypeORM with Postgres functions
+    const query = this.eventRepository
+      .createQueryBuilder('event')
+      .addSelect(
+        `(
+          6371 * 2 * ASIN(
+            SQRT(
+              POWER(SIN(RADIANS((:lat - event.latitude) / 2)), 2) +
+              COS(RADIANS(:lat)) * COS(RADIANS(event.latitude)) *
+              POWER(SIN(RADIANS((:lon - event.longitude) / 2)), 2)
+            )
+          )
+        )`,
+        'distance_km'
+      )
+      .where('event.latitude IS NOT NULL AND event.longitude IS NOT NULL')
+      .andWhere('event.event_start_date >= CURRENT_DATE')
+      .andWhere(
+        `(6371 * 2 * ASIN(SQRT(POWER(SIN(RADIANS((:lat - event.latitude) / 2)), 2) + COS(RADIANS(:lat)) * COS(RADIANS(event.latitude)) * POWER(SIN(RADIANS((:lon - event.longitude) / 2)), 2)))) <= :radius`,
+        { radius }
+      )
+      .setParameters({ lat, lon })
+      .orderBy('distance_km', 'ASC');
+
+    if (!isAdmin) {
+      query.andWhere('event.approval = :approval', {
+        approval: ApprovalStatus.APPROVED,
+      });
+    }
+
+    try {
+      const rows = await query.getRawAndEntities();
+      const data = rows.entities.map((e, idx) => {
+        const dist = parseFloat((rows.raw[idx].distance_km as string) ?? '0');
+        return Object.assign(e, { distance_km: Number(dist.toFixed(2)) });
+      });
+
+      return {
+        statusCode: 200,
+        message: 'Nearby events fetched successfully',
+        data,
+      };
+    } catch (error) {
+      throw new HttpException(
+        'An error occurred while fetching nearby events.',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
   async getEventsByStatus(
     type: string = 'all',
     isAdmin: boolean = false,

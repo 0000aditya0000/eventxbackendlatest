@@ -32,6 +32,34 @@ export const createEventSwagger = () => {
   );
 };
 
+export const getNearbyEventsSwagger = () => {
+  return applyDecorators(
+    ApiTags('events'),
+    ApiOperation({ summary: 'Get nearby events by coordinates' }),
+    ApiBearerAuth(),
+    ApiQuery({
+      name: 'latitude',
+      required: true,
+      description: 'Latitude of the user location',
+      example: 12.9716,
+    }),
+    ApiQuery({
+      name: 'longitude',
+      required: true,
+      description: 'Longitude of the user location',
+      example: 77.5946,
+    }),
+    ApiQuery({
+      name: 'radius',
+      required: false,
+      description: 'Search radius in kilometers (default 10km)',
+      example: 10,
+    }),
+    ApiOkResponse({ description: 'Successfully fetched nearby events' }),
+    ApiBadRequestResponse({ description: 'Invalid or missing coordinates' })
+  );
+};
+
 export const updateEventSwagger = () => {
   return applyDecorators(
     ApiTags('events'),

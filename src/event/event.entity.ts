@@ -76,6 +76,12 @@ export class Event {
   })
   updated_at: Date;
 
+  @Column({ type: 'double precision', nullable: true })
+  latitude: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  longitude: number;
+
   @OneToMany(() => UserEvent, (userEvent) => userEvent.event)
   userEvents: UserEvent[];
 }
