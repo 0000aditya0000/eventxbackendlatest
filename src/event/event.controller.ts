@@ -21,6 +21,7 @@ import {
   getEventsByStatusSwagger,
   findEventsSwagger,
   getEventsByCreatorSwagger,
+  getNearbyEventsSwagger,
 } from './event.swagger';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { EventService } from './event.service';
@@ -83,6 +84,23 @@ export class EventController {
   ) {
     const isAdmin = role === 'admin';
     return this.eventService.findEvents(keyword, type, isAdmin);
+  }
+
+  @Get('nearby')
+  @getNearbyEventsSwagger()
+  async getNearby(
+    @User('role') role: string,
+    @Query('latitude') latitude: number,
+    @Query('longitude') longitude: number,
+    @Query('radius') radiusKm?: number
+  ) {
+    const isAdmin = role === 'admin';
+    return this.eventService.getNearbyEvents(
+      latitude,
+      longitude,
+      radiusKm,
+      isAdmin
+    );
   }
 
   @Get(':id?')
