@@ -60,6 +60,15 @@ export class CreateEventDto {
   @IsBoolean()
   @IsNotEmpty()
   readonly trending: boolean;
+
+  @ApiProperty({ example: 37.7749, description: 'Latitude of event location' })
+  latitude: number;
+
+  @ApiProperty({
+    example: -122.4194,
+    description: 'Longitude of event location',
+  })
+  longitude: number;
 }
 
 export class UpdateEventDto extends PartialType(CreateEventDto) {
