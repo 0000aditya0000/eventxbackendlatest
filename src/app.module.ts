@@ -31,8 +31,8 @@ import { AuthModule } from './auth/auth.module';
       synchronize: true,
       ssl:
         process.env.NODE_ENV === 'production'
-          ? false
-          : { rejectUnauthorized: false },
+          ? { rejectUnauthorized: false }
+          : false,
     }),
     TypeOrmModule.forFeature([Event, User, UserEvent, Session]),
     AdminModule,
